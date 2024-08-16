@@ -1,8 +1,15 @@
 {
-  "domain": "pdf",
-  "name": "PDF File",
+  "domain": "ha_pdf",
+  "name": "HA PDF",
+  "issue_tracker": "https://github.com/emcniece/ha_pdf/issues",
+  "codeowners": [
+    "@emcniece",
+    "@pineappleemperor"
+  ],
+  "dependencies": [],
   "documentation": "https://github.com/emcniece/ha_pdf",
+  "integration_type": "hub",
+  "iot_class": "calculated",
   "requirements": ["PyPDF2~=3.0.0"],
-  "codeowners": ["@emcniece"],
   "version": "1.1.2"
 }
