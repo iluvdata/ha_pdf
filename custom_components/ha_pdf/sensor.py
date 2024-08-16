@@ -2,7 +2,7 @@
 import logging
 import os
 import re
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
