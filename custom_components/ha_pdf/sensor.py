@@ -5,7 +5,10 @@ import re
 from pypdf import PdfReader
 import voluptuous as vol
 
-from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.components.sensor import (
+    PLATFORM_SCHEMA,
+    SensorStateClass
+)
 from homeassistant.const import CONF_NAME, CONF_UNIT_OF_MEASUREMENT, CONF_VALUE_TEMPLATE
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
@@ -84,6 +87,8 @@ class PDFFileSensor(Entity):
         self._regex_search = regex_search
         self._regex_match_index = regex_match_index
         self._state = None
+        self._attr_state_class = SensorStateClass.MEASUREMENT
+        
 
     @property
     def name(self):
@@ -126,9 +131,12 @@ class PDFFileSensor(Entity):
         match_index = int(self._regex_match_index)
 
         if self._regex_search is not None:
-            matches = re.search(self._regex_search, text)
-            matched_index = matches[match_index]
-            state = matched_index
+            matches = re.findall(self._regex_search, text)
+            if len(matches) == 0 :
+                state = None
+            else:
+                matched_index = matches[match_index]
+                state = matched_index
         else:
             state = text
 
