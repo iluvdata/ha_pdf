@@ -19,6 +19,7 @@ CONF_FILE_PATH = "file_path"
 CONF_PDF_PAGE = "pdf_page"
 CONF_REGEX_SEARCH = "regex_search"
 CONF_REGEX_MATCH_INDEX = "regex_match_index"
+CONF_UNIQUE_ID = "unique_id"
 
 ATTR_VALUE = "value"
 
@@ -35,6 +36,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_PDF_PAGE, default=0): cv.string,
         vol.Optional(CONF_REGEX_SEARCH): cv.string,
         vol.Optional(CONF_REGEX_MATCH_INDEX, default=0): cv.string,
+        vol.Optional(CONF_UNIQUE_ID): cv.string
     }
 )
 
@@ -48,6 +50,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     value_template = config.get(CONF_VALUE_TEMPLATE)
     regex_search = config.get(CONF_REGEX_SEARCH)
     regex_match_index = config.get(CONF_REGEX_MATCH_INDEX)
+    unique_id = config.get(CONF_UNIQUE_ID)
 
     if value_template is not None:
         value_template.hass = hass
@@ -60,7 +63,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             pdf_page,
             value_template,
             regex_search,
-            regex_match_index
+            regex_match_index,
+            unique_id
         )], True)
     else:
         _LOGGER.error("'%s' is not an allowed directory", file_path)
@@ -76,7 +80,8 @@ class PDFFileSensor(Entity):
             pdf_page,
             value_template,
             regex_search,
-            regex_match_index
+            regex_match_index,
+            unique_id
     ):
         """Initialize the file sensor."""
         self._name = name
@@ -88,12 +93,17 @@ class PDFFileSensor(Entity):
         self._regex_match_index = regex_match_index
         self._state = None
         self._attr_state_class = SensorStateClass.MEASUREMENT
+        self._unique_id = unique_id
         
 
     @property
     def name(self):
         """Return the name of the sensor."""
         return self._name
+    
+    @property
+    def unique_id(self):
+        return self._unique_id
 
     @property
     def unit_of_measurement(self):
@@ -146,7 +156,7 @@ class PDFFileSensor(Entity):
             }
             state = self._val_tpl.render(variables, parse_result=False)
 
-        if len(state) > 255:
+        if isinstance(state, str) and len(state) > 255:
             _LOGGER.warning("PDF data exceeds 255 characters, truncating: %s", state)
             state = state[:255]
 

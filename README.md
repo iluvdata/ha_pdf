@@ -75,6 +75,12 @@ Post-regex template rendering of the value.
 
 <hr />
 
+#### unique_id (optional)
+
+[Unique ID](https://developers.home-assistant.io/docs/entity_registry_index/) to assign to this sensor.
+
+<hr />
+
 ## Full Configuration Example
 
 The PDF in this example contains a line of text reading the following:
